@@ -31,6 +31,49 @@ export default function QuoteForm() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [leadRef, setLeadRef] = useState<string | null>(null);
 
+  // Sync with interactive tools (Coverage Checker & Cost Estimator)
+  React.useEffect(() => {
+    const handleEstimateSync = (e: Event) => {
+      const customEvent = e as CustomEvent<{
+        service?: string;
+        urgency?: string;
+        priceRange?: string;
+        sizeLabel?: string;
+      }>;
+      if (customEvent.detail) {
+        if (customEvent.detail.service) {
+          setSelectedService(customEvent.detail.service);
+        }
+        setFormData((prev) => ({
+          ...prev,
+          urgency: customEvent.detail.urgency || prev.urgency,
+          notes: customEvent.detail.priceRange
+            ? `Calculator Estimate: ${customEvent.detail.priceRange} [${customEvent.detail.sizeLabel || 'Standard'}]`
+            : prev.notes,
+        }));
+        setShowNotes(true);
+      }
+    };
+
+    const handleZipSync = (e: Event) => {
+      const customEvent = e as CustomEvent<{ zipCode?: string }>;
+      if (customEvent.detail?.zipCode) {
+        setFormData((prev) => ({
+          ...prev,
+          zipCode: customEvent.detail.zipCode || prev.zipCode,
+        }));
+      }
+    };
+
+    window.addEventListener('mrperfect:set-estimate', handleEstimateSync);
+    window.addEventListener('mrperfect:set-zip', handleZipSync);
+
+    return () => {
+      window.removeEventListener('mrperfect:set-estimate', handleEstimateSync);
+      window.removeEventListener('mrperfect:set-zip', handleZipSync);
+    };
+  }, []);
+
   const triggerConfetti = () => {
     try {
       confetti({
