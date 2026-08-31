@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import confetti from 'canvas-confetti';
-import { ShieldCheck, Phone, CheckCircle2, Sparkles, ArrowRight, Wind } from 'lucide-react';
+import { ShieldCheck, Phone, CheckCircle2, Sparkles, ArrowRight, Wind, Star } from 'lucide-react';
 import { BUSINESS_DATA } from '@/data/businessData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,6 +25,7 @@ export default function QuoteForm() {
     urgency: 'Normal (Within 1-3 Days)',
     notes: '',
   });
+  const [showNotes, setShowNotes] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
@@ -116,11 +117,11 @@ export default function QuoteForm() {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-5">
-            {/* Header */}
-            <div className="space-y-1.5">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-500/40 text-[#5DCCD3] text-xs font-bold">
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Instant Estimate • Zero Obligation</span>
+            {/* Header with Mini Trust Pill */}
+            <div className="space-y-2">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-950/80 border border-cyan-500/40 text-[#5DCCD3] text-xs font-bold shadow-sm">
+                <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                <span>⭐ 4.6 (92+ Austin Reviews) • 100% Zero-Mess Guarantee</span>
               </div>
               <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
                 Request Free Austin Estimate
@@ -195,10 +196,15 @@ export default function QuoteForm() {
                 </div>
               </div>
 
+              {/* Phone Trust & Anti-Spam Microcopy */}
+              <p className="text-[11px] text-[#5DCCD3]/95 flex items-center gap-1 font-medium -mt-1">
+                <span>🔒 No spam. We only text your estimate & technician ETA window within 15 mins.</span>
+              </p>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label htmlFor="zipCode" className="text-xs text-slate-300 font-medium">
-                    Austin Zip Code
+                    Austin Zip / Neighborhood
                   </label>
                   <Input
                     id="zipCode"
@@ -227,37 +233,65 @@ export default function QuoteForm() {
                 </div>
               </div>
 
-              <div className="space-y-1">
-                <label htmlFor="notes" className="text-xs text-slate-300 font-medium">
-                  Project Notes / Symptoms (Optional)
-                </label>
-                <Textarea
-                  id="notes"
-                  placeholder="e.g. Smoke odor when heater runs, dryer taking too long, annual safety camera check..."
-                  value={formData.notes}
-                  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                  rows={2}
-                  className="bg-slate-950/80 border-slate-700 text-white placeholder:text-slate-400 focus-visible:ring-[#5DCCD3] text-xs"
-                />
+              {/* Progressive Disclosure: Collapsible Notes */}
+              <div className="pt-0.5">
+                {!showNotes ? (
+                  <button
+                    type="button"
+                    onClick={() => setShowNotes(true)}
+                    className="text-xs text-[#5DCCD3] hover:text-cyan-300 font-medium flex items-center gap-1.5 transition-colors group py-1"
+                  >
+                    <span className="w-4 h-4 rounded-full bg-cyan-950 border border-cyan-500/40 flex items-center justify-center text-[11px] group-hover:border-cyan-400 text-cyan-300">+</span>
+                    <span>Add details or symptoms (optional)</span>
+                  </button>
+                ) : (
+                  <div className="space-y-1 animate-in fade-in duration-200">
+                    <div className="flex items-center justify-between">
+                      <label htmlFor="notes" className="text-xs text-slate-300 font-medium">
+                        Project Notes / Symptoms (Optional)
+                      </label>
+                      <button
+                        type="button"
+                        onClick={() => setShowNotes(false)}
+                        className="text-[11px] text-slate-400 hover:text-slate-200 transition-colors"
+                      >
+                        Hide
+                      </button>
+                    </div>
+                    <Textarea
+                      id="notes"
+                      placeholder="e.g. Smoke odor when heater runs, dryer taking too long, annual safety camera check..."
+                      value={formData.notes}
+                      onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
+                      rows={2}
+                      className="bg-slate-950/80 border-slate-700 text-white placeholder:text-slate-400 focus-visible:ring-[#5DCCD3] text-xs"
+                    />
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* Submit Action */}
+            {/* Submit Action with Value Subtext */}
             <div className="space-y-2.5 pt-1">
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full brand-gradient-btn hover:opacity-95 text-slate-950 font-black text-base py-5 rounded-xl shadow-xl shadow-cyan-500/25 transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2"
+                className="w-full brand-gradient-btn hover:opacity-95 text-slate-950 font-black text-base py-4 rounded-xl shadow-xl shadow-cyan-500/25 transition-all hover:scale-[1.01] active:scale-[0.99] flex flex-col items-center justify-center gap-0.5 h-auto"
               >
                 {isSubmitting ? (
-                  <span className="flex items-center gap-2">
+                  <span className="flex items-center gap-2 py-1">
                     <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
                     Locking In Your Estimate...
                   </span>
                 ) : (
                   <>
-                    <span>Get Fast Estimate & Book</span>
-                    <ArrowRight className="w-5 h-5" />
+                    <div className="flex items-center justify-center gap-2">
+                      <span>Get My Free Austin Estimate</span>
+                      <ArrowRight className="w-5 h-5" />
+                    </div>
+                    <span className="text-[11px] font-semibold text-slate-900/80">
+                      100% Free • Zero Obligation • 15-Min Response
+                    </span>
                   </>
                 )}
               </Button>

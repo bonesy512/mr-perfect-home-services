@@ -72,22 +72,31 @@ export default function Hero() {
             </div>
 
             {/* Dual CTAs */}
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-4">
-              <a
-                href="#quote-form"
-                className="flex items-center justify-center gap-3 brand-gradient-btn hover:opacity-95 text-slate-950 font-black text-base px-7 py-4 rounded-xl shadow-xl shadow-cyan-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
-              >
-                <span>Schedule Online Estimate</span>
-                <ArrowRight className="w-5 h-5" />
-              </a>
-
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-3">
               <a
                 href={`tel:${BUSINESS_DATA.phoneRaw}`}
-                className="flex items-center justify-center gap-3 bg-slate-900/90 hover:bg-slate-800 border border-cyan-500/30 text-white font-extrabold text-base px-6 py-4 rounded-xl transition-all group hover:border-cyan-400"
+                className="flex items-center justify-center gap-3 brand-gradient-btn hover:opacity-95 text-slate-950 font-black text-base px-7 py-4 rounded-xl shadow-xl shadow-cyan-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
               >
-                <Phone className="w-5 h-5 text-[#5DCCD3] group-hover:rotate-12 transition-transform" />
-                <span>Call {BUSINESS_DATA.phone}</span>
+                <Phone className="w-5 h-5" />
+                <span>Call Austin Dispatch: {BUSINESS_DATA.phone}</span>
               </a>
+
+              <button
+                type="button"
+                onClick={() => {
+                  const formEl = document.getElementById('quote-form');
+                  if (formEl) {
+                    formEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    setTimeout(() => {
+                      document.getElementById('fullName')?.focus();
+                    }, 350);
+                  }
+                }}
+                className="flex items-center justify-center gap-2.5 bg-slate-900/90 hover:bg-slate-800 border border-cyan-500/30 text-white font-bold text-base px-6 py-4 rounded-xl transition-all group hover:border-cyan-400 cursor-pointer"
+              >
+                <span>Get Instant Online Estimate</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform text-[#5DCCD3]" />
+              </button>
             </div>
 
             {/* Trust Pill Bar */}
