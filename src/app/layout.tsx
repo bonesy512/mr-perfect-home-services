@@ -15,7 +15,7 @@ const outfit = Outfit({
   display: 'swap',
 });
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mrperfectaustin.com';
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mr-perfect-home-services.vercel.app';
 
 export const viewport: Viewport = {
   themeColor: '#080d19',
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
     default: "Mr Perfect Home Services | Austin's Certified Chimney & Air Quality Specialists",
-    template: '%s | Mr Perfect Home Services',
+    template: '%s | Mr Perfect Home Services Austin',
   },
   description:
     'Austin premier chimney sweep, 360° video camera safety inspections, fireplace repairs, and whole-home air duct sanitization. 100% Zero-Mess Guarantee. 4.6★ Google rated. Call (737) 299-7300.',
@@ -43,11 +43,13 @@ export const metadata: Metadata = {
     'Air Duct Cleaning Austin',
     'Dryer Vent Cleaning Austin',
     'Mr Perfect Home Services',
-    'Level 2 Chimney Inspection',
+    'Level 2 Chimney Inspection Austin',
     'Creosote Removal Austin',
     'Chimney Cap Installation Austin',
     'Indoor Air Quality Austin',
-    'Zero Mess Chimney Cleaning Austin'
+    'Zero Mess Chimney Cleaning Austin',
+    'Austin Fireplace Masonry Repair',
+    'HVAC Duct Sanitization Austin'
   ],
   referrer: 'origin-when-cross-origin',
   creator: 'Mr Perfect Home Services',
@@ -115,4 +117,3 @@ export default function RootLayout({
     </html>
   );
 }
-

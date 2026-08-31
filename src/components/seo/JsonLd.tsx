@@ -2,22 +2,22 @@ import React from 'react';
 import { BUSINESS_DATA } from '@/data/businessData';
 
 export default function JsonLd() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mrperfectaustin.com';
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mr-perfect-home-services.vercel.app';
 
-  // 1. LocalBusiness / HVAC / Chimney Service Schema
+  // 1. LocalBusiness / HomeAndConstructionBusiness / HVAC / Chimney Service Schema
   const businessSchema = {
     '@context': 'https://schema.org',
     '@type': ['HomeAndConstructionBusiness', 'HVACBusiness', 'ProfessionalService'],
     '@id': `${siteUrl}/#business`,
     name: BUSINESS_DATA.name,
-    alternateName: 'Mr Perfect Chimney Sweep & Air Duct Cleaning',
+    alternateName: 'Mr Perfect Chimney Sweep & Air Duct Cleaning Austin',
     description: BUSINESS_DATA.description,
     url: siteUrl,
     telephone: '+1-737-299-7300',
-    email: 'contact@mrperfectaustin.com',
+    email: 'dispatch@mr-perfect-home-services.vercel.app',
     priceRange: '$$',
     currenciesAccepted: 'USD',
-    paymentAccepted: 'Cash, Credit Card, Check, Debit Card',
+    paymentAccepted: 'Cash, Credit Card, Check, Debit Card, Apple Pay',
     image: `${siteUrl}/opengraph-image`,
     logo: `${siteUrl}/favicon.ico`,
     address: {

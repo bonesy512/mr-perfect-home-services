@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import confetti from 'canvas-confetti';
-import { ShieldCheck, Phone, CheckCircle2, Sparkles, ArrowRight, Wind, Star } from 'lucide-react';
+import { ShieldCheck, Phone, CheckCircle2, ArrowRight, Wind, Star, AlertCircle } from 'lucide-react';
 import { BUSINESS_DATA } from '@/data/businessData';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -28,6 +28,8 @@ export default function QuoteForm() {
   const [showNotes, setShowNotes] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [leadRef, setLeadRef] = useState<string | null>(null);
 
   const triggerConfetti = () => {
     try {
@@ -42,16 +44,44 @@ export default function QuoteForm() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.fullName || !formData.phone) return;
+    setErrorMessage(null);
+
+    if (!formData.fullName.trim() || !formData.phone.trim()) {
+      setErrorMessage('Please fill out your name and a valid phone number.');
+      return;
+    }
 
     setIsSubmitting(true);
-    setTimeout(() => {
-      setIsSubmitting(false);
+
+    try {
+      const res = await fetch('/api/quote', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...formData,
+          service: selectedService,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Failed to submit estimate request. Please try calling dispatch directly.');
+      }
+
+      setLeadRef(data.leadId || null);
       setSubmitted(true);
       triggerConfetti();
-    }, 600);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Network error occurred. Please call (737) 299-7300.';
+      setErrorMessage(msg);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -74,6 +104,11 @@ export default function QuoteForm() {
               <p className="text-slate-300 text-sm sm:text-base max-w-md mx-auto">
                 Thank you, <span className="font-bold text-[#5DCCD3]">{formData.fullName}</span>. An Austin home safety coordinator is reviewing your <span className="font-bold text-white">{selectedService}</span> inquiry.
               </p>
+              {leadRef && (
+                <p className="text-[11px] font-mono text-slate-400">
+                  Confirmation Ref: <span className="text-[#3DCB7D] font-bold">{leadRef}</span>
+                </p>
+              )}
             </div>
 
             <div className="p-4 sm:p-5 rounded-2xl bg-slate-950/80 border border-slate-800 text-left max-w-md mx-auto space-y-3">
@@ -108,6 +143,7 @@ export default function QuoteForm() {
                 onClick={() => {
                   setSubmitted(false);
                   setFormData({ fullName: '', phone: '', zipCode: '', urgency: 'Normal (Within 1-3 Days)', notes: '' });
+                  setErrorMessage(null);
                 }}
                 className="w-full sm:w-auto border-slate-700 text-slate-300 hover:bg-slate-800"
               >
@@ -131,6 +167,22 @@ export default function QuoteForm() {
               </p>
             </div>
 
+            {/* Error Message Banner */}
+            {errorMessage && (
+              <div className="p-3 rounded-xl bg-red-950/70 border border-red-500/40 text-red-200 text-xs flex items-start gap-2 animate-in fade-in">
+                <AlertCircle className="w-4 h-4 text-red-400 shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-semibold text-red-300">{errorMessage}</p>
+                  <p className="mt-0.5 text-[11px] text-red-300/80">
+                    Need immediate help? Call Austin Dispatch at{' '}
+                    <a href={`tel:${BUSINESS_DATA.phoneRaw}`} className="underline font-bold text-white">
+                      {BUSINESS_DATA.phone}
+                    </a>
+                  </p>
+                </div>
+              </div>
+            )}
+
             {/* Service Category Buttons */}
             <div className="space-y-1.5">
               <label className="text-[11px] font-bold uppercase tracking-wider text-slate-300">
@@ -143,6 +195,7 @@ export default function QuoteForm() {
                     <button
                       key={srv.id}
                       type="button"
+                      disabled={isSubmitting}
                       onClick={() => setSelectedService(srv.id)}
                       className={`text-left p-2.5 rounded-xl border text-xs transition-all relative ${
                         isSelected
@@ -173,6 +226,7 @@ export default function QuoteForm() {
                   <Input
                     id="fullName"
                     required
+                    disabled={isSubmitting}
                     placeholder="e.g. Marcus Sterling"
                     value={formData.fullName}
                     onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
@@ -188,6 +242,7 @@ export default function QuoteForm() {
                     id="phone"
                     type="tel"
                     required
+                    disabled={isSubmitting}
                     placeholder="e.g. (737) 299-7300"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -208,6 +263,7 @@ export default function QuoteForm() {
                   </label>
                   <Input
                     id="zipCode"
+                    disabled={isSubmitting}
                     placeholder="e.g. 78701, Westlake"
                     value={formData.zipCode}
                     onChange={(e) => setFormData({ ...formData, zipCode: e.target.value })}
@@ -221,6 +277,7 @@ export default function QuoteForm() {
                   </label>
                   <select
                     id="urgency"
+                    disabled={isSubmitting}
                     value={formData.urgency}
                     onChange={(e) => setFormData({ ...formData, urgency: e.target.value })}
                     className="w-full rounded-md bg-slate-950/80 border border-slate-700 text-white text-xs px-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#5DCCD3] h-10"
@@ -238,8 +295,9 @@ export default function QuoteForm() {
                 {!showNotes ? (
                   <button
                     type="button"
+                    disabled={isSubmitting}
                     onClick={() => setShowNotes(true)}
-                    className="text-xs text-[#5DCCD3] hover:text-cyan-300 font-medium flex items-center gap-1.5 transition-colors group py-1"
+                    className="text-xs text-[#5DCCD3] hover:text-cyan-300 font-medium flex items-center gap-1.5 transition-colors group py-1 cursor-pointer"
                   >
                     <span className="w-4 h-4 rounded-full bg-cyan-950 border border-cyan-500/40 flex items-center justify-center text-[11px] group-hover:border-cyan-400 text-cyan-300">+</span>
                     <span>Add details or symptoms (optional)</span>
@@ -253,13 +311,14 @@ export default function QuoteForm() {
                       <button
                         type="button"
                         onClick={() => setShowNotes(false)}
-                        className="text-[11px] text-slate-400 hover:text-slate-200 transition-colors"
+                        className="text-[11px] text-slate-400 hover:text-slate-200 transition-colors cursor-pointer"
                       >
                         Hide
                       </button>
                     </div>
                     <Textarea
                       id="notes"
+                      disabled={isSubmitting}
                       placeholder="e.g. Smoke odor when heater runs, dryer taking too long, annual safety camera check..."
                       value={formData.notes}
                       onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
@@ -276,12 +335,12 @@ export default function QuoteForm() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full brand-gradient-btn hover:opacity-95 text-slate-950 font-black text-base py-4 rounded-xl shadow-xl shadow-cyan-500/25 transition-all hover:scale-[1.01] active:scale-[0.99] flex flex-col items-center justify-center gap-0.5 h-auto"
+                className="w-full brand-gradient-btn hover:opacity-95 text-slate-950 font-black text-base py-4 rounded-xl shadow-xl shadow-cyan-500/25 transition-all hover:scale-[1.01] active:scale-[0.99] flex flex-col items-center justify-center gap-0.5 h-auto cursor-pointer"
               >
                 {isSubmitting ? (
                   <span className="flex items-center gap-2 py-1">
                     <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
-                    Locking In Your Estimate...
+                    Locking In Your Free Estimate...
                   </span>
                 ) : (
                   <>

@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 import { BUSINESS_DATA } from '@/data/businessData';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mrperfectaustin.com';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://mr-perfect-home-services.vercel.app';
   const currentDate = new Date();
 
   // Core main sections
@@ -20,7 +20,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.9,
     },
     {
-      url: `${baseUrl}/#quote`,
+      url: `${baseUrl}/#quote-form`,
       lastModified: currentDate,
       changeFrequency: 'weekly',
       priority: 0.9,
@@ -29,25 +29,25 @@ export default function sitemap(): MetadataRoute.Sitemap {
       url: `${baseUrl}/#why-us`,
       lastModified: currentDate,
       changeFrequency: 'weekly',
-      priority: 0.8,
+      priority: 0.85,
     },
     {
       url: `${baseUrl}/#reviews`,
       lastModified: currentDate,
       changeFrequency: 'weekly',
-      priority: 0.8,
+      priority: 0.85,
     },
     {
       url: `${baseUrl}/#service-areas`,
       lastModified: currentDate,
       changeFrequency: 'weekly',
-      priority: 0.8,
+      priority: 0.85,
     },
     {
       url: `${baseUrl}/#faq`,
       lastModified: currentDate,
       changeFrequency: 'monthly',
-      priority: 0.7,
+      priority: 0.75,
     },
   ];
 
