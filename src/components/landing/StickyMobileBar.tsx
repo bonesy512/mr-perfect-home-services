@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { track } from '@vercel/analytics';
 import { Phone, ArrowUpRight } from 'lucide-react';
 import { BUSINESS_DATA } from '@/data/businessData';
 
@@ -11,6 +12,7 @@ export default function StickyMobileBar() {
         {/* Call Button (Primary CTA) */}
         <a
           href={`tel:${BUSINESS_DATA.phoneRaw}`}
+          onClick={() => track('phone_click', { source: 'sticky_bar' })}
           className="flex-1 brand-gradient-btn hover:opacity-95 text-slate-950 font-black text-sm py-3 px-3 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/25 active:scale-95 transition-transform"
         >
           <Phone className="w-4 h-4 fill-slate-950" />

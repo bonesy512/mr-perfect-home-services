@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Inter, Outfit } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/next';
 import './globals.css';
 import JsonLd from '@/components/seo/JsonLd';
 
@@ -113,6 +114,7 @@ export default function RootLayout({
         <div className="flex-1 flex flex-col pb-28 md:pb-0">
           {children}
         </div>
+        <Analytics />
       </body>
     </html>
   );

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { track } from '@vercel/analytics';
 import { Calculator, Sparkles, ShieldCheck, CheckCircle2, ArrowRight, Wind, Flame, Home, Clock } from 'lucide-react';
 import { BUSINESS_DATA } from '@/data/businessData';
 
@@ -112,6 +113,14 @@ export default function CostEstimator() {
   const estimatedMax = Math.round((currentService.baseMax + currentSize.extraMax) + currentUrgency.fee);
 
   const handleLockInEstimate = () => {
+    // Track calculator lock-in in Vercel Analytics
+    track('calculator_locked', {
+      service: currentService.id,
+      price: `$${estimatedMin} - $${estimatedMax}`,
+      home_size: currentSize.label,
+      urgency: currentUrgency.id,
+    });
+
     if (typeof window !== 'undefined') {
       window.dispatchEvent(
         new CustomEvent('mrperfect:set-estimate', {

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { track } from '@vercel/analytics';
 import { Flame, Phone, X, ShieldAlert, Sparkles } from 'lucide-react';
 import { BUSINESS_DATA } from '@/data/businessData';
 
@@ -39,6 +40,7 @@ export default function SeasonalBanner() {
         <div className="flex items-center gap-3 shrink-0">
           <a
             href={`tel:${BUSINESS_DATA.phoneRaw}`}
+            onClick={() => track('phone_click', { source: 'seasonal_banner' })}
             className="inline-flex items-center gap-1.5 font-bold text-slate-950 bg-[#5DCCD3] hover:bg-cyan-300 px-3 py-1 rounded-lg text-[11px] shadow-sm transition-all hover:scale-105 active:scale-95"
           >
             <Phone className="w-3 h-3" />

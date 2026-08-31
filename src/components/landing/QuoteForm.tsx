@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import confetti from 'canvas-confetti';
+import { track } from '@vercel/analytics';
 import { ShieldCheck, Phone, CheckCircle2, ArrowRight, Wind, Star, AlertCircle } from 'lucide-react';
 import { BUSINESS_DATA } from '@/data/businessData';
 import { Button } from '@/components/ui/button';
@@ -116,6 +117,13 @@ export default function QuoteForm() {
         throw new Error(data.error || 'Failed to submit estimate request. Please try calling dispatch directly.');
       }
 
+      // Track successful submission in Vercel Analytics
+      track('quote_submitted', {
+        service: selectedService,
+        zip: formData.zipCode || 'unspecified',
+        urgency: formData.urgency,
+      });
+
       setLeadRef(data.leadId || null);
       setSubmitted(true);
       triggerConfetti();
@@ -176,6 +184,7 @@ export default function QuoteForm() {
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-center gap-3">
               <a
                 href={`tel:${BUSINESS_DATA.phoneRaw}`}
+                onClick={() => track('phone_click', { source: 'quote_form_success' })}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 brand-gradient-btn hover:opacity-95 text-slate-950 font-black px-6 py-3 rounded-xl shadow-lg transition-all"
               >
                 <Phone className="w-4 h-4" />

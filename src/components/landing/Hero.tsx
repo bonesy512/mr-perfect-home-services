@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { track } from '@vercel/analytics';
 import { Star, ShieldCheck, Phone, CheckCircle2, ArrowRight, Sparkles, Wind, Flame } from 'lucide-react';
 import { BUSINESS_DATA } from '@/data/businessData';
 import CleanAirCanvasWrapper from '@/components/canvas/CleanAirCanvasWrapper';
@@ -75,6 +76,7 @@ export default function Hero() {
             <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-4 pt-3">
               <a
                 href={`tel:${BUSINESS_DATA.phoneRaw}`}
+                onClick={() => track('phone_click', { source: 'hero' })}
                 className="flex items-center justify-center gap-3 brand-gradient-btn hover:opacity-95 text-slate-950 font-black text-base px-7 py-4 rounded-xl shadow-xl shadow-cyan-500/25 transition-all hover:scale-[1.02] active:scale-[0.98]"
               >
                 <Phone className="w-5 h-5" />

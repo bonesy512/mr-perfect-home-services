@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { track } from '@vercel/analytics';
 import { MapPin, CheckCircle2, Clock, Truck, ArrowRight, ShieldCheck, Phone, Search } from 'lucide-react';
 import { BUSINESS_DATA } from '@/data/businessData';
 import { Input } from '@/components/ui/input';
@@ -106,7 +107,15 @@ export default function CoverageChecker() {
     const digits = val.replace(/\D/g, '').slice(0, 5);
     setZipInput(digits);
     if (digits.length === 5) {
-      setResult(lookupAustinZip(digits));
+      const match = lookupAustinZip(digits);
+      setResult(match);
+      if (match) {
+        track('coverage_checked', {
+          zip: digits,
+          zone: match.zoneName,
+          matched: match.matched,
+        });
+      }
     } else {
       setResult(null);
     }
@@ -114,10 +123,23 @@ export default function CoverageChecker() {
 
   const handleSelectQuickZip = (zip: string) => {
     setZipInput(zip);
-    setResult(lookupAustinZip(zip));
+    const match = lookupAustinZip(zip);
+    setResult(match);
+    if (match) {
+      track('coverage_checked', {
+        zip,
+        zone: match.zoneName,
+        matched: match.matched,
+      });
+    }
   };
 
   const handleBookInZone = () => {
+    track('coverage_book_clicked', {
+      zip: zipInput,
+      zone: result?.zoneName || 'Austin',
+    });
+
     if (typeof window !== 'undefined') {
       window.dispatchEvent(
         new CustomEvent('mrperfect:set-zip', {
@@ -255,6 +277,7 @@ export default function CoverageChecker() {
 
                       <a
                         href={`tel:${BUSINESS_DATA.phoneRaw}`}
+                        onClick={() => track('phone_click', { source: 'coverage_checker' })}
                         className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-slate-900 hover:bg-slate-800 border border-cyan-500/30 text-white text-xs font-bold px-4 py-3.5 rounded-xl transition-all"
                       >
                         <Phone className="w-3.5 h-3.5 text-[#5DCCD3]" />
@@ -273,6 +296,7 @@ export default function CoverageChecker() {
                     </p>
                     <a
                       href={`tel:${BUSINESS_DATA.phoneRaw}`}
+                      onClick={() => track('phone_click', { source: 'coverage_checker_extended' })}
                       className="inline-flex items-center gap-2 text-xs font-bold text-slate-950 bg-amber-400 hover:bg-amber-300 px-4 py-2.5 rounded-xl transition-all"
                     >
                       <Phone className="w-3.5 h-3.5" />

@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { track } from '@vercel/analytics';
 import { Phone, ShieldCheck, Star, Clock, Sparkles } from 'lucide-react';
 import { BUSINESS_DATA } from '@/data/businessData';
 import { Button } from '@/components/ui/button';
@@ -61,6 +62,7 @@ export default function Header() {
             {/* Direct Phone Dispatch Button */}
             <a
               href={`tel:${BUSINESS_DATA.phoneRaw}`}
+              onClick={() => track('phone_click', { source: 'header' })}
               className="flex items-center gap-2.5 px-3 sm:px-4 py-2 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-cyan-500/30 text-white transition-all shadow-sm group hover:border-cyan-400"
             >
               <div className="w-8 h-8 rounded-lg bg-cyan-500/15 flex items-center justify-center text-[#5DCCD3] group-hover:bg-[#5DCCD3] group-hover:text-slate-950 transition-colors">
